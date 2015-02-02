@@ -26,10 +26,14 @@ set SQL2K8SP4=10.0.6000.29
 
 :: Check registry for Windows version
 for /f "tokens=3" %%i in ('reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v CurrentVersion') do set faildoze=%%i
+echo %ERRORLEVEL%
 :: Check registry for PowerShell version
 for /f "tokens=3" %%i in ('reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine /v PowerShellVersion') do set powerhell=%%i
+echo %ERRORLEVEL%
 :: Check registry for SQL version
+:: reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft /f %SQL2K8R2% /s <- Recursive search, gives alotta output, will need to debug this and verify the path
 for /f "tokens=3" %%i in ('reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSSQLServer\MSSQLServer\CurrentVersion /v CurrentVersion') do set esquell=%%i
+echo %ERRORLEVEL%
 
 echo Windows version: %faildoze%
 echo PowerShell version: %powerhell% 
