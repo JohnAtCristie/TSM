@@ -7,7 +7,12 @@ If you use any of the scripts in my TSM collection you are welcome to provide fe
 
 - BAClientSchedConfig.cmd
 	- Create the services necessary for BA Client. TSM Client Scheduler, TSM Client Acceptor
-	- Tested on Windows8.1 
+	- [X] Windows 8.1
+	- [] Windows 2k12
+	- [] Windows 2k8
 	
 - TDPversion.cmd
 	- Pre-alfa version of script to determine which version of DP for MSSQL to install. Should probably be Powerhell instead in *the future*  
+
+	
+[Twittah](https://www.twitter.com/HeresJohnyOrg)
