@@ -1,0 +1,90 @@
+set SQLDISPLAYMODE WIDE
+select '***********************************************************' from status
+select '**** Tivoli Storage Manager Suite for Unified Recovery ****' from status
+select '****           Terabyte (TB) Capacity Report           ****' from status
+select '****           For Use with V5.x or Servers            ****' from status
+select '****************** (macro version: 1.5) *******************' from status
+select '  ' from status
+select 'Capacity Report for server:  '||trim(trailing ' ' from server_name) from status
+select '  ' from status
+select 'Report generatation date: '||cast(current date as char(15)) from status
+select '  ' from status
+select 'Data Managed by TSM Suite for Unified Recovery' from status
+select '  TB within PRIMARY storage pools:  '||trim(leading '0' from char((sum(occupancy.logical_mb)/1048576))) from occupancy, stgpools, filespaces where occupancy.node_name is not null and occupancy.filespace_name is not null and occupancy.stgpool_name=stgpools.stgpool_name and stgpools.pooltype='PRIMARY' and occupancy.filespace_name not in ('DocAve', 'ADSM.SERVER', '') and occupancy.filespace_id=filespaces.filespace_id and filespaces.node_name=occupancy.node_name and  (filespaces.filespace_type not in ('API:TSM HSM Client for Windows', 'API:FastBack'))  
+select '  ' from status
+select '*----------------- Deduplication Benefits ----------------*' from status
+select 'Consider upgrading to Version 6. The data deduplication capability can' from status
+select '  reduce the data in PRIMARY storage pools that would be reported ' from status
+select '  for server capacity.' from status
+select '  ' from status
+select '*----------------- Notes and Explanations ----------------*' from status
+select '* Copy Pool data represents DR copies of data and ' from status
+select '    is excluded from measurement' from status
+select '* Active Data Pools are a special type of Copy pool ' from status
+select '    and Active Data Pools data is excluded from measurement' from status
+select '* Virtual Volume data is data from a source TSM Server stored' from status
+select '    as an archive on a target TSM server. For reporting ' from status
+select '    purposes Virtual volume data is only counted on the source server' from status
+select '* Data from TSM for SharePoint and HSM for Windows are ' from status
+select '    excluded from the capacity measurement. These are ' from status
+select '    OEM products that are purchased separately' from status
+select '* Data Replicated from FastBack to a TSM Primary Storage ' from status
+select '    pools is also excluded from measurement, this data ' from status
+select '    represent DR copies of data and is excluded ' from status
+select '    from TSM Suite for Unified Recovery capacity' from status
+select '* Other Duplicated Data represents data reported in ' from status
+select '    PRIMARY storage that is a duplication ' from status
+select '    of data already stored through other meanstgpools.' from status
+
+select '  ' from status
+
+select '*---------------- Details on Excluded Data ---------------*' from status
+select ' ' as "Data excluded from the Measurement of capacity for TSM Suite for Unified Recovery" from status
+
+select '        Storage pools of type COPY or ACTIVE: '||trim(trailing ' ' from trim(leading '0' from char((sum(occupancy.logical_mb)/1048576))))||' TB' from occupancy where occupancy.node_name is not null and occupancy.stgpool_name in ( select stgpools.stgpool_name from stgpools where occupancy.stgpool_name=stgpools.stgpool_name and stgpools.pooltype in('COPY', 'ACTIVEDATA'))
+
+select ' Server to Server Virtual Volume Target Data: '||trim(trailing ' ' from trim(leading '0' from char((sum(occupancy.logical_mb)/1048576))))||' TB' from occupancy where occupancy.node_name is not null and occupancy.stgpool_name in ( select stgpools.stgpool_name from stgpools where occupancy.stgpool_name=stgpools.stgpool_name and stgpools.pooltype='PRIMARY') and occupancy.filespace_name in ('ADSM.SERVER')
+
+select '                          TSM for Sharepoint: '||trim(trailing ' ' from trim(leading '0' from char((sum(occupancy.logical_mb)/1048576))))||' TB' from occupancy where occupancy.node_name is not null and occupancy.stgpool_name in ( select stgpools.stgpool_name from stgpools where occupancy.stgpool_name=stgpools.stgpool_name and stgpools.pooltype='PRIMARY') and occupancy.filespace_name in ('DocAve')
+
+select '             Fastback data replicated to TSM: '||trim(trailing ' ' from trim(leading '0' from char((sum(occupancy.logical_mb)/1048576))))||' TB' from occupancy where occupancy.node_name is not null and occupancy.stgpool_name in ( select stgpools.stgpool_name from stgpools where occupancy.stgpool_name=stgpools.stgpool_name and stgpools.pooltype='PRIMARY') and occupancy.filespace_name in (select filespaces.filespace_name from filespaces where filespaces.node_name=occupancy.node_name and filespaces.filespace_id=occupancy.filespace_id and (filespaces.filespace_type in ('API:FastBack')))
+
+select '                         TSM HSM for Windows: '||trim(trailing ' ' from trim(leading '0' from char((sum(occupancy.logical_mb)/1048576))))||' TB' from occupancy where occupancy.node_name is not null and occupancy.stgpool_name in ( select stgpools.stgpool_name from stgpools where occupancy.stgpool_name=stgpools.stgpool_name and stgpools.pooltype='PRIMARY') and occupancy.filespace_name in (select filespaces.filespace_name from filespaces where filespaces.node_name=occupancy.node_name and filespaces.filespace_id=occupancy.filespace_id and (filespaces.filespace_type in ('API:TSM HSM Client for Windows')))
+
+select '                       Other Duplicated Data: '||trim(trailing ' ' from trim( leading '0' from char((sum(occupancy.logical_mb)/1048576))))||' TB' from occupancy where occupancy.stgpool_name in ( select stgpools.stgpool_name from stgpools where occupancy.stgpool_name=stgpools.stgpool_name and stgpools.pooltype='PRIMARY') and ( occupancy.node_name is null or occupancy.filespace_name is null )
+
+select '  ' from status
+select '*------------ Details on Unified Recovery Suite ----------*' from status
+select 'The TSM Suite for Unified Recovery is a bundle of 10 TSM Family' from status
+select '  products on a per TB pricing  metric. The following products ' from status
+select '  are included in the  bundle :' from status
+
+select '    * TSM Extended Edition: Highly scalable enterprise class ' from status
+select '        backup/restore, archive and disaster recovery' from status
+
+select '    * TSM for Databases: Non-disruptive protection ' from status
+select '        of Oracle and Microsoft SQL data' from status
+
+select '    * TSM for ERP: Protects vital SAP R/3 system data ' from status
+select '        more efficiently, consistently and reliably' from status
+
+select '    * TSM for Mail: Secures  Domino and Exchange data; granular' from status
+select '       restore of Exchange objects' from status
+
+select '    * TSM for SAN: Maximizes storage network connections for ' from status
+select '        TSM servers and client computers' from status
+
+select '    * TSM for Space Management: Software that moves inactive data ' from status
+select '        to reclaim online disk space' from status
+
+select '    * TSM for Virtual Environments: Advanced protection and flexible ' from status
+select '        recovery of VMware environments' from status
+
+select '    * TSM FastBack: Advanced data protection and near-instant ' from status
+select '        recovery for Windows and Linux servers' from status
+
+select '    * TSM FastBack for BMR: Restore a Windows or Linux Server ' from status
+select '        Operating System volume within an hour' from status
+
+select '    * TSM FastBack for Exchange: Fast and easy recovery of ' from status
+select '        individual e-mail objects' from status
