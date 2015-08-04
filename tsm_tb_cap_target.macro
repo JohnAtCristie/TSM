@@ -1,0 +1,96 @@
+select '***********************************************************' from sysibm.sysdummy1
+select '**** Tivoli Storage Manager Suite for Unified Recovery ****' from sysibm.sysdummy1
+select '****           Terabyte (TB) Capacity Report           ****' from sysibm.sysdummy1
+select '****           for Use with V7.1.1 or higher           ****' from sysibm.sysdummy1
+select '****                                                   ****' from sysibm.sysdummy1
+select '****       Special handling for target server using    ****' from sysibm.sysdummy1
+select '****        dissimilar policies with replication.      ****' from sysibm.sysdummy1
+select '****************** (macro version: 2.0) *******************' from sysibm.sysdummy1
+select '  ' from sysibm.sysdummy1
+select 'Capacity Report for server:  '||trim(trailing ' ' from server_name) from status
+select '  ' from sysibm.sysdummy1
+select 'Report generatation date:  '||cast(current date as char(15)) as " " from sysibm.sysdummy1
+select '  ' from sysibm.sysdummy1
+select 'Data Managed by TSM Suite for Unified Recovery' from sysibm.sysdummy1
+select 'TB within PRIMARY storage pools: '||strip(char((sum(o.logical_mb)/1048576)), leading, '0') as " " from occupancy o where o.node_name is not null and o.filespace_name is not null and o.stgpool_name in ( select s.stgpool_name from stgpools s where o.stgpool_name=s.stgpool_name and s.pooltype='PRIMARY') and o.filespace_name not in ('DocAve', 'ADSM.SERVER', '') and o.filespace_id in (select f.filespace_id from filespaces f where f.filespace_id=o.filespace_id and (f.filespace_type not in ('API:TSM HSM Client for Windows', 'API:FastBack'))) and o.node_name in (select node_name from nodes where repl_mode in ('NONE','RECEIVE','SYNCRECEIVE'))
+select '  ' from sysibm.sysdummy1
+select '*----------------- Deduplication Benefits ----------------*' from sysibm.sysdummy1
+select 'TSM Data deduplication resulted in' from sysibm.sysdummy1
+select '  TB being excluded from measurement:  '||strip(char(((sum(o.reporting_mb)-sum(o.logical_mb))/1048576)), leading, '0') as " " from occupancy o where o.node_name is not null and o.filespace_name is not null and o.stgpool_name in ( select s.stgpool_name from stgpools s where o.stgpool_name=s.stgpool_name and s.pooltype='PRIMARY') and o.filespace_name not in ('DocAve', 'ADSM.SERVER', '') and o.filespace_id in (select f.filespace_id from filespaces f where f.node_name=o.node_name and f.filespace_id=o.filespace_id and (f.filespace_type not in ('API:TSM HSM Client for Windows', 'API:FastBack')))
+select '  ' from sysibm.sysdummy1
+select '*----------------- Notes and Explanations ----------------*' from sysibm.sysdummy1
+select '* Copy Pool data represents DR copies of data and ' from sysibm.sysdummy1
+select '    is excluded from measurement' from sysibm.sysdummy1
+select '* Active Data Pools are a special type of Copy pool ' from sysibm.sysdummy1
+select '    and Active Data Pools data is excluded from measurement' from sysibm.sysdummy1
+select '* Virtual Volume data is data from a source TSM Server stored' from sysibm.sysdummy1
+select '    as an archive on a target TSM server. For reporting ' from sysibm.sysdummy1
+select '    purposes Virtual volume data is only counted on the source server' from sysibm.sysdummy1
+select '* Data from TSM for SharePoint and HSM for Windows are ' from sysibm.sysdummy1
+select '    excluded from the capacity measurement. These are ' from sysibm.sysdummy1
+select '    OEM products that are purchased separately' from sysibm.sysdummy1
+select '* Data Replicated from FastBack to a TSM Primary Storage ' from sysibm.sysdummy1
+select '    pools is also excluded from measurement, this data ' from sysibm.sysdummy1
+select '    represent DR copies of data and is excluded ' from sysibm.sysdummy1
+select '    from TSM Suite for Unified Recovery capacity' from sysibm.sysdummy1
+select '* Other Duplicated Data represents data reported in ' from sysibm.sysdummy1
+select '    PRIMARY storage that is a duplication ' from sysibm.sysdummy1
+select '    of data already stored through other means.' from sysibm.sysdummy1
+select '* Data Replicated from one TSM server to another is excluded ' from sysibm.sysdummy1
+select '    on the target server while the client node(s) are configured ' from sysibm.sysdummy1
+select '    with REPLMODE=RECEIVE.' from sysibm.sysdummy1
+
+select '  ' from sysibm.sysdummy1
+
+select '*---------------- Details on Excluded Data ---------------*' from sysibm.sysdummy1
+select ' ' as "Data excluded from the Measurement of capacity for TSM Suite for Unified Recovery" from sysibm.sysdummy1
+
+select '                   Storage pools of type COPY or ACTIVE: '||trim( trailing ' ' from strip(char(sum(o.logical_mb)/1048576),leading,'0'))||' TB' from occupancy o where o.node_name is not null and o.filespace_name is not null and o.stgpool_name in ( select s.stgpool_name from stgpools s where o.stgpool_name=s.stgpool_name and s.pooltype in('COPY', 'ACTIVEDATA'))
+
+select '            Server to Server Virtual Volume Target Data: '||trim( trailing ' ' from strip(char((sum(o.logical_mb)/1048576)),leading,'0'))||' TB' from occupancy o where o.node_name is not null and o.filespace_name is not null and o.stgpool_name in ( select s.stgpool_name from stgpools s where o.stgpool_name=s.stgpool_name and s.pooltype='PRIMARY') and o.filespace_name in ('ADSM.SERVER')
+
+select '                                     TSM for Sharepoint: '||trim(trailing ' ' from strip(char((sum(o.logical_mb)/1048576)),leading,'0'))||' TB' from occupancy o where o.node_name is not null and o.filespace_name is not null and o.stgpool_name in ( select s.stgpool_name from stgpools s where o.stgpool_name=s.stgpool_name and s.pooltype='PRIMARY') and o.filespace_name in ('DocAve')
+
+select '                        Fastback data replicated to TSM: '||trim( trailing ' ' from strip(char((sum(o.logical_mb)/1048576)),leading,'0'))||' TB' from occupancy o where o.node_name is not null and o.filespace_name is not null and o.stgpool_name in ( select s.stgpool_name from stgpools s where o.stgpool_name=s.stgpool_name and s.pooltype='PRIMARY') and o.filespace_id in (select f.filespace_id from filespaces f where f.node_name=o.node_name and f.filespace_id=o.filespace_id and (f.filespace_type in ('API:FastBack')))
+
+select '                                    TSM HSM for Windows: '||trim( trailing ' ' from strip(char((sum(o.logical_mb)/1048576)),leading,'0'))||' TB' from occupancy o where o.node_name is not null and o.filespace_name is not null and o.stgpool_name in ( select s.stgpool_name from stgpools s where o.stgpool_name=s.stgpool_name and s.pooltype='PRIMARY') and o.filespace_id in (select f.filespace_id from filespaces f where f.node_name=o.node_name and f.filespace_id=o.filespace_id and (f.filespace_type in ('API:TSM HSM Client for Windows')))
+
+select '                                  Other Duplicated Data: '||trim( trailing ' ' from strip(char((sum(o.logical_mb)/1048576)),leading,'0'))||' TB' from occupancy o where o.stgpool_name in ( select s.stgpool_name from stgpools s where o.stgpool_name=s.stgpool_name and s.pooltype='PRIMARY') and ( o.filespace_name is NULL or o.node_name is NULL )
+
+select '   TSM Target Server Client Nodes Data being Replicated: '||trim( trailing ' ' from strip(char((sum(o.logical_mb)/1048576)),leading,'0'))||' TB' from occupancy o where o.stgpool_name in ( select s.stgpool_name from stgpools s, nodes  where o.stgpool_name=s.stgpool_name and s.pooltype='PRIMARY') and o.node_name in (select node_name from nodes where repl_mode in ( 'RECEIVE','SYNCRECEIVE'))
+
+select '  ' from sysibm.sysdummy1
+select '*------------ Details on Unified Recovery Suite ----------*' from sysibm.sysdummy1
+select 'The TSM Suite for Unified Recovery is a bundle of 10 TSM Family' from sysibm.sysdummy1
+select '  products on a per TB pricing  metric. The following products ' from sysibm.sysdummy1
+select '  are included in the  bundle :' from sysibm.sysdummy1
+
+select '    * TSM Extended Edition: Highly scalable enterprise class ' from sysibm.sysdummy1
+select '        backup/restore, archive and disaster recovery' from sysibm.sysdummy1
+
+select '    * TSM for Databases: Non-disruptive protection ' from sysibm.sysdummy1
+select '        of Oracle and Microsoft SQL data' from sysibm.sysdummy1
+
+select '    * TSM for ERP: Protects vital SAP R/3 system data ' from sysibm.sysdummy1
+select '        more efficiently, consistently and reliably' from sysibm.sysdummy1
+
+select '    * TSM for Mail: Secures  Domino and Exchange data; granular' from sysibm.sysdummy1
+select '       restore of Exchange objects' from sysibm.sysdummy1
+
+select '    * TSM for SAN: Maximizes storage network connections for ' from sysibm.sysdummy1
+select '        TSM servers and client computers' from sysibm.sysdummy1
+
+select '    * TSM for Space Management: Software that moves inactive data ' from sysibm.sysdummy1
+select '        to reclaim online disk space' from sysibm.sysdummy1
+
+select '    * TSM for Virtual Environments: Advanced protection and flexible ' from sysibm.sysdummy1
+select '        recovery of VMware environments' from sysibm.sysdummy1
+
+select '    * TSM FastBack: Advanced data protection and near-instant ' from sysibm.sysdummy1
+select '        recovery for Windows and Linux servers' from sysibm.sysdummy1
+
+select '    * TSM FastBack for BMR: Restore a Windows or Linux Server ' from sysibm.sysdummy1
+select '        Operating System volume within an hour' from sysibm.sysdummy1
+
+select '    * TSM FastBack for Exchange: Fast and easy recovery of ' from sysibm.sysdummy1
+select '        individual e-mail objects' from sysibm.sysdummy1
