@@ -3,8 +3,8 @@ TCPSERVERADDRESS	tsmserver
 HTTPPORT			1581
 Nodename			tsmnodename
 COMMMETHOD			TCPip
-TCPPORT				1600
-SSL					YES
+*TCPPORT				1600
+*SSL					YES
 PASSWORDACCESS		generate
 MANAGEDSERVICES		schedule webclient
 DEDUPLICATION		yes
@@ -17,6 +17,6 @@ SNAPSHOTPROVIDERFS	vss
 QUERYSCHEDPERIOD 	2
 ERRORLOGRETENTION 	7 D 
 SCHEDLOGRETENTION 	7 D
-ERRORLOGNAME		C:\Program Files\Tivoli\TSM\baclient\dsmerror.log
-SCHEDLOGNAME		C:\Program Files\Tivoli\TSM\baclient\dsmsched.log
+ERRORLOGNAME		"C:\Program Files\Tivoli\TSM\baclient\dsmerror.log"
+SCHEDLOGNAME		"C:\Program Files\Tivoli\TSM\baclient\dsmsched.log"
 DATEFORMAT			3
