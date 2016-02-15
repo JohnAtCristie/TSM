@@ -1,0 +1,2 @@
+Missed nodes yesterday
+select e.scheduled_start as Schedule_start, n.tcp_name as Server, e.status as Last_schedule_name, n.domain_name as SLA, days(current_date) - days(n.lastacc_time) as Last_Access, a.schedule_name as Schedule_Name from events as e, nodes as n, associations as a where e.status='Missed' and e.node_name=n.node_name and e.node_name=a.node_name and days(current_timestamp)-days(e.scheduled_start)=1 order by scheduled_start desc
