@@ -1,2 +1,5 @@
 Missed nodes yesterday
 select e.scheduled_start as Schedule_start, n.tcp_name as Server, e.status as Last_schedule_name, n.domain_name as SLA, days(current_date) - days(n.lastacc_time) as Last_Access, a.schedule_name as Schedule_Name from events as e, nodes as n, associations as a where e.status='Missed' and e.node_name=n.node_name and e.node_name=a.node_name and days(current_timestamp)-days(e.scheduled_start)=1 order by scheduled_start desc
+
+Time taken to mount volumes
+select s.start_time, s.end_time, timestampdiff(4, s.end_time-s.start_time) as "Minutes to mount tape", s.drive_name, s.volume_name, v.stgpool_name, v.status, v.access, v.pct_utilized from summary as s, volumes as v where activity = 'TAPE MOUNT' and s.volume_name = v.volume_name order by end_time desc
