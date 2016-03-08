@@ -9,3 +9,9 @@ select entity as "Backup stg", mediaw as "MediaW", bytes/1024/1024/1024 as "GB",
 
 Number of volumes per status and stgpool
 select varchar(stgpool_name, 10) AS Stgpool, varchar(status, 10) AS Status, count(status) AS NumVols from volumes group by status, stgpool_name order by 1,3 desc
+
+List volumes i stgpool $1 where % Reclaimable space is over $2
+select volume_name, pct_reclaim from volumes where stgpool_name = upper('$1') and pct_reclaim>$2 order by 2 desc
+
+Number of volumes in stgpool $1 where % reclaimable space is over $2
+select count(volume_name) from volumes where stgpool_name = upper('$1') and pct_reclaim>$2
