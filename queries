@@ -15,3 +15,6 @@ select volume_name, pct_reclaim from volumes where stgpool_name = upper('$1') an
 
 Number of volumes in stgpool $1 where % reclaimable space is over $2
 select count(volume_name) from volumes where stgpool_name = upper('$1') and pct_reclaim>$2
+
+Number of restorepoints in TSM4VE (BETA)
+select substr(filespace_name,9) AS VM, count(ll_name) AS NumRestorePoints from backups where node_name = 'VM_STOCKHOLM_CLOUD' and ll_name like 'SNAPSHOT%' group by filespace_name order by 2 asc
