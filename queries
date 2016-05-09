@@ -5,6 +5,10 @@ select e.scheduled_start as Schedule_start, n.tcp_name as Server, e.status as La
 _SUMMARY_
 - Backup STG history
 select entity as "Backup stg", mediaw as "MediaW", bytes/1024/1024/1024 as "GB", timestampdiff(4, end_time - start_time) as "Duration(Minutes)", start_time, end_time from summary_extended where activity = 'STGPOOL BACKUP' order by end_time desc
+- Sum of minutes a tape dirve have been workingj
+select sum(timestampdiff(4, end_time - start_time)) as SUM_MIN, drive_name from summary_extended where activity = 'TAPE MOUNT' and start_time>'2016-05-07 00:00:01' and end_time<'2016-05-07 23:59:59' group by drive_name
+- When? How long? Whitch tape and in which dirve? Times can be adjusted as needed
+select start_time, end_time, timestampdiff(4, end_time - start_time) as minutes, varchar(volume_name, 15) as volume, varchar(drive_name,30) as drive from summary_extended where start_time>'2016-05-07 00:00:01' and end_time<'2016-05-07 23:59:59' and activity = 'TAPE MOUNT' order by end_time
 
 - Time a volume has been mounted
 select s.start_time, s.end_time, timestampdiff(4, s.end_time-s.start_time) as "Minutes tape mounted", s.drive_name, s.volume_name, v.stgpool_name, v.status, v.access, v.pct_utilized from summary as s, volumes as v where activity = 'TAPE MOUNT' and s.volume_name = v.volume_name order by end_time desc
