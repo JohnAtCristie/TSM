@@ -11,6 +11,9 @@ select sum(timestampdiff(4, end_time - start_time)) as SUM_MIN, drive_name from 
 select start_time, end_time, timestampdiff(4, end_time - start_time) as minutes, varchar(volume_name, 15) as volume, varchar(drive_name,30) as drive from summary_extended where start_time>'2016-05-07 00:00:01' and end_time<'2016-05-07 23:59:59' and activity = 'TAPE MOUNT' order by end_time
 - Let's look at restores # TODO: Figure out how to count all the mounts for all the processes
 select date(a.end_time) as date, varchar(a.entity, 70) as server, timestampdiff(4, a.end_time-a.start_time) as minutes, a.bytes/1024/1024/1024 as GIB, round(decimal(a.bytes/1024/1024)/timestampdiff(2, a.end_time - a.start_time), 2) as MiB_S, count(b.msgno) from summary_extended a, actlog b where activity = 'RESTORE' and a.number = b.session and b.msgno in (8337, 8340) group by entity, bytes, end_time, start_time,number order by end_time
+- Check dedup and compression savings:
+SELECT DATE(s.START_TIME) AS Date, (CAST(FLOAT(SUM(s.bytes_protected))/1024/1024 AS DECIMAL(12,2))) AS PROTECTED_MB, (CAST(FLOAT(SUM(s.bytes_written))/1024/1024 AS DECIMAL(12,2))) AS WRITTEN_MB, (CAST(FLOAT(SUM(s.dedup_savings))/1024/1024 AS DECIMAL(12,2))) AS DEDUPSAVINGS_MB, (CAST(FLOAT(SUM(s.comp_savings))/1024/1024 AS DECIMAL(12,2))) AS COMPSAVINGS_MB, (CAST(FLOAT(SUM(s.dedup_savings))/FLOAT(SUM(s.bytes_protected))*100 AS DECIMAL(5,2))) AS DEDUP_PCT, (CAST(FLOAT(SUM(s.bytes_protected) - SUM(s.bytes_written))/FLOAT(SUM(s.bytes_protected))*100 AS DECIMAL(5,2))) AS SAVINGS_PCT from summary s WHERE activity='BACKUP' or activity='ARCHIVE' GROUP BY DATE(S.START_TIME)
+
 
 
 - Time a volume has been mounted
