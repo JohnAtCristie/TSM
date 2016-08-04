@@ -35,3 +35,7 @@ select count(volume_name) as numvols, cast(pct_reclaim as INT)/10*10 as PCT from
 _BACKUPS_
 - Number of restorepoints in TSM4VE (BETA)
 select substr(filespace_name,9) AS VM, count(ll_name) AS NumRestorePoints from backups where node_name = 'VCENTER_NODE' and ll_name like 'SNAPSHOT%' group by filespace_name order by 2 asc
+
+_ACTLOG_
+- Number of deleted and created volumes in a stgpool called FILEPOOL
+select date(date_time) as date, 'ANR'||msgno||'I' as ANR, count(msgno) as num_vols from actlog where msgno in (1340, 1341) and message like '%FILEPOOL%' group by date(date_time), msgno
