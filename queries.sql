@@ -33,7 +33,7 @@ select varchar(stgpool_name, 10) AS Stgpool, varchar(status, 10) AS Status, coun
 select count(volume_name) as numvols, cast(pct_reclaim as INT)/10*10 as PCT from volumes where stgpool_name = upper('copypool') group by cast(pct_reclaim as int)/10*10
 
 --_BACKUPS_
-- Number of restorepoints in TSM4VE (BETA)
+-- Number of restorepoints in TSM4VE (BETA)
 select substr(filespace_name,9) AS VM, count(ll_name) AS NumRestorePoints from backups where node_name = 'VCENTER_NODE' and ll_name like 'SNAPSHOT%' group by filespace_name order by 2 asc
 
 --_ACTLOG_
