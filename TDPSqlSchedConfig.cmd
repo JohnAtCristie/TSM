@@ -86,7 +86,7 @@ echo Return code: %TDPSCHEDRC%
 goto :eof
 
 :installclientacceptor
-dsmcutil install cad /name:"TSM SQL Client Acceptor" /cadschedname:"TSM SQL Client Acceptor" /node:%NODENAME% /password:%TDPPASSWORD% /optfile:%TDP_OPT% /autostart:yes /startnow:no
+dsmcutil install cad /name:"TSM SQL Client Acceptor" /node:%NODENAME% /password:%TDPPASSWORD% /optfile:%TDP_OPT% /cadschedname:"TSM SQL Client Scheduler" /autostart:yes /startnow:no
 set TDPCADRC=%ERRORLEVEL%
 echo Return code: %TDPCADRC%
 goto :eof
